@@ -1,7 +1,3 @@
-<!-- =========================================
-ARQUIVO: jogadores.html
-========================================= -->
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -199,7 +195,9 @@ ALBUM
     gap:30px;
 }
 
-/* CARD */
+/* =========================================
+CARD
+========================================= */
 
 .player-card{
 
@@ -262,12 +260,13 @@ ALBUM
     0 0 35px rgba(255,180,0,.22);
 }
 
-/* FOTO */
+/* =========================================
+FOTO
+========================================= */
 
 .player-photo{
 
     width:100%;
-
     height:260px;
 
     border-radius:22px;
@@ -276,25 +275,33 @@ ALBUM
 
     border:2px solid rgba(255,180,0,.22);
 
-    background:#111;
+    background:#0d0d0d;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
 .player-photo img{
 
-    width:100%;
-    height:100%;
+    max-width:100%;
+    max-height:100%;
 
-    object-fit:cover;
+    object-fit:contain;
 
     transition:.4s;
 }
 
+/* hover imagem */
+
 .player-card:hover img{
 
-    transform:scale(1.05);
+    transform:scale(1.03);
 }
 
-/* INFO */
+/* =========================================
+INFO
+========================================= */
 
 .player-info{
 
@@ -352,8 +359,20 @@ nav{
     padding:20px;
 }
 
+nav .logo{
+    font-size:18px;
+}
+
 .player-photo{
     height:220px;
+}
+
+.album{
+    padding:0 20px 100px;
+}
+
+.album-grid{
+    gap:20px;
 }
 
 }
@@ -375,7 +394,7 @@ NOITE DA <span>ELÉTRICA</span>
 </div>
 
 <a href="index.html">
- Voltar
+← Voltar
 </a>
 
 </nav>
@@ -485,7 +504,7 @@ Equipe responsável pelo desenvolvimento do Sistema de Controle de Temperatura e
 
 <div class="player-info">
 <h3>Jordan Everton</h3>
-<span> Eng. Elétrica</span>
+<span>Eng. Elétrica</span>
 </div>
 
 </div>
@@ -589,7 +608,10 @@ Equipe responsável pelo desenvolvimento do Sistema de Controle de Temperatura e
 <footer>
 
 Sistema de Controle de Temperatura em Malha Fechada • Equipe do Projeto
- <p> Site desenvolvido por Jordan Everton </p>
+
+<p>
+Site desenvolvido por Jordan Everton
+</p>
 
 </footer>
 
