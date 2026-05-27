@@ -1,0 +1,597 @@
+<!-- =========================================
+ARQUIVO: jogadores.html
+========================================= -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Engenheiros do Projeto</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+/* =========================================
+RESET
+========================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:'Inter',sans-serif;
+
+    background:#050505;
+
+    color:white;
+
+    overflow-x:hidden;
+}
+
+/* =========================================
+FUNDO
+========================================= */
+
+.background{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:-3;
+
+    background:
+
+    radial-gradient(circle at top left,
+    rgba(255,180,0,.15),
+    transparent 30%),
+
+    radial-gradient(circle at top right,
+    rgba(255,180,0,.08),
+    transparent 30%),
+
+    linear-gradient(135deg,#000,#050505,#0c0c0c);
+}
+
+.grid{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:-2;
+
+    background-image:
+
+    linear-gradient(rgba(255,180,0,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,180,0,.04) 1px,transparent 1px);
+
+    background-size:45px 45px;
+}
+
+/* =========================================
+NAVBAR
+========================================= */
+
+nav{
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:22px 70px;
+
+    background:rgba(0,0,0,.75);
+
+    backdrop-filter:blur(15px);
+
+    border-bottom:1px solid rgba(255,180,0,.15);
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    z-index:1000;
+}
+
+.logo{
+
+    font-size:24px;
+
+    font-weight:800;
+}
+
+.logo span{
+
+    color:#ffb400;
+
+    text-shadow:
+    0 0 15px rgba(255,180,0,.8);
+}
+
+nav a{
+
+    color:white;
+
+    text-decoration:none;
+
+    transition:.3s;
+}
+
+nav a:hover{
+
+    color:#ffb400;
+}
+
+/* =========================================
+HEADER
+========================================= */
+
+.header{
+
+    padding-top:160px;
+
+    text-align:center;
+
+    padding-bottom:60px;
+}
+
+.header h1{
+
+    font-size:60px;
+
+    margin-bottom:20px;
+
+    font-weight:800;
+}
+
+.header h1 span{
+
+    color:#ffb400;
+
+    text-shadow:
+    0 0 18px rgba(255,180,0,.7);
+}
+
+.header p{
+
+    color:#c9c9c9;
+
+    font-size:18px;
+
+    max-width:850px;
+
+    margin:auto;
+
+    line-height:1.8;
+}
+
+/* =========================================
+ALBUM
+========================================= */
+
+.album{
+
+    padding:0 8% 120px;
+}
+
+.album-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+
+    gap:30px;
+}
+
+/* CARD */
+
+.player-card{
+
+    background:
+    linear-gradient(
+        180deg,
+        rgba(255,180,0,.12),
+        rgba(15,15,15,.95)
+    );
+
+    border:2px solid rgba(255,180,0,.18);
+
+    border-radius:30px;
+
+    padding:18px;
+
+    overflow:hidden;
+
+    position:relative;
+
+    transition:.4s;
+
+    box-shadow:
+    0 0 25px rgba(255,180,0,.08);
+}
+
+/* brilho */
+
+.player-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-80px;
+    right:-80px;
+
+    width:180px;
+    height:180px;
+
+    background:
+    radial-gradient(
+        circle,
+        rgba(255,180,0,.28),
+        transparent 70%
+    );
+}
+
+/* hover */
+
+.player-card:hover{
+
+    transform:
+    translateY(-8px)
+    scale(1.02);
+
+    border-color:rgba(255,180,0,.6);
+
+    box-shadow:
+    0 0 35px rgba(255,180,0,.22);
+}
+
+/* FOTO */
+
+.player-photo{
+
+    width:100%;
+
+    height:260px;
+
+    border-radius:22px;
+
+    overflow:hidden;
+
+    border:2px solid rgba(255,180,0,.22);
+
+    background:#111;
+}
+
+.player-photo img{
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    transition:.4s;
+}
+
+.player-card:hover img{
+
+    transform:scale(1.05);
+}
+
+/* INFO */
+
+.player-info{
+
+    margin-top:18px;
+
+    text-align:center;
+}
+
+.player-info h3{
+
+    font-size:21px;
+
+    margin-bottom:8px;
+
+    font-weight:700;
+}
+
+.player-info span{
+
+    color:#ffd15c;
+
+    font-size:14px;
+
+    text-transform:uppercase;
+
+    letter-spacing:1px;
+}
+
+/* =========================================
+FOOTER
+========================================= */
+
+footer{
+
+    padding:40px;
+
+    text-align:center;
+
+    color:#999;
+
+    border-top:1px solid rgba(255,180,0,.08);
+}
+
+/* =========================================
+RESPONSIVO
+========================================= */
+
+@media(max-width:768px){
+
+.header h1{
+    font-size:42px;
+}
+
+nav{
+    padding:20px;
+}
+
+.player-photo{
+    height:220px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="background"></div>
+<div class="grid"></div>
+
+<!-- NAVBAR -->
+
+<nav>
+
+<div class="logo">
+NOITE DA <span>ELÉTRICA</span>
+</div>
+
+<a href="index.html">
+ Voltar
+</a>
+
+</nav>
+
+<!-- HEADER -->
+
+<section class="header">
+
+<h1>
+Engenheiros do <span>Projeto</span>
+</h1>
+
+<p>
+Equipe responsável pelo desenvolvimento do Sistema de Controle de Temperatura em Malha Fechada.
+</p>
+
+</section>
+
+<!-- ÁLBUM -->
+
+<section class="album">
+
+<div class="album-grid">
+
+<!-- CARD 1 -->
+
+<div class="player-card">
+
+<div class="player-photo">
+<img src="Bruno Costa.jpeg" alt="">
+</div>
+
+<div class="player-info">
+<h3>Bruno Costa</h3>
+<span>Eng. Elétrica</span>
+</div>
+
+</div>
+
+<!-- CARD 2 -->
+
+<div class="player-card">
+
+<div class="player-photo">
+<img src="Bruno Pedrosa.jpeg" alt="">
+</div>
+
+<div class="player-info">
+<h3>Bruno Pedrosa</h3>
+<span>Eng. Elétrica</span>
+</div>
+
+</div>
+
+<!-- CARD 3 -->
+
+<div class="player-card">
+
+<div class="player-photo">
+<img src="Elkiele.jpeg" alt="">
+</div>
+
+<div class="player-info">
+<h3>Elkiele</h3>
+<span>Eng. Elétrica</span>
+</div>
+
+</div>
+
+<!-- CARD 4 -->
+
+<div class="player-card">
+
+<div class="player-photo">
+<img src="Ithalita.jpeg" alt="">
+</div>
+
+<div class="player-info">
+<h3>Ithalita</h3>
+<span>Eng. Elétrica</span>
+</div>
+
+</div>
+
+<!-- CARD 5 -->
+
+<div class="player-card">
+
+<div class="player-photo">
+<img src="Jõao.jpeg" alt="">
+</div>
+
+<div class="player-info">
+<h3>João</h3>
+<span>Eng. Elétrica</span>
+</div>
+
+</div>
+
+<!-- CARD 6 -->
+
+<div class="player-card">
+
+<div class="player-photo">
+<img src="Jordan Everton.jpeg" alt="">
+</div>
+
+<div class="player-info">
+<h3>Jordan Everton</h3>
+<span> Eng. Elétrica</span>
+</div>
+
+</div>
+
+<!-- CARD 7 -->
+
+<div class="player-card">
+
+<div class="player-photo">
+<img src="Luiz Carlos.jpeg" alt="">
+</div>
+
+<div class="player-info">
+<h3>Luiz Carlos</h3>
+<span>Eng. Elétrica</span>
+</div>
+
+</div>
+
+<!-- CARD 8 -->
+
+<div class="player-card">
+
+<div class="player-photo">
+<img src="Marvel.jpeg" alt="">
+</div>
+
+<div class="player-info">
+<h3>Marvel</h3>
+<span>Eng. Elétrica</span>
+</div>
+
+</div>
+
+<!-- CARD 9 -->
+
+<div class="player-card">
+
+<div class="player-photo">
+<img src="Raimundo Eric.jpeg" alt="">
+</div>
+
+<div class="player-info">
+<h3>Raimundo Eric</h3>
+<span>Projetista</span>
+</div>
+
+</div>
+
+<!-- CARD 10 -->
+
+<div class="player-card">
+
+<div class="player-photo">
+<img src="Rakel Araújo.jpeg" alt="">
+</div>
+
+<div class="player-info">
+<h3>Rakel Araújo</h3>
+<span>Eng. Elétrica</span>
+</div>
+
+</div>
+
+<!-- CARD 11 -->
+
+<div class="player-card">
+
+<div class="player-photo">
+<img src="Rodrigo.jpeg" alt="">
+</div>
+
+<div class="player-info">
+<h3>Rodrigo</h3>
+<span>Eng. Elétrica</span>
+</div>
+
+</div>
+
+<!-- CARD 12 -->
+
+<div class="player-card">
+
+<div class="player-photo">
+<img src="Wictor.jpeg" alt="">
+</div>
+
+<div class="player-info">
+<h3>Wictor</h3>
+<span>Eng. Elétrica</span>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+
+Sistema de Controle de Temperatura em Malha Fechada • Equipe do Projeto
+ <p> Site desenvolvido por Jordan Everton </p>
+
+</footer>
+
+</body>
+</html>

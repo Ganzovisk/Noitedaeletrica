@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Controle de Temperatura em Malha Fechada</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+/* =========================================
+PALETA BASEADA NA IMAGEM
+========================================= */
+
+:root{
+    --bg:#050505;
+    --bg2:#0d0d0d;
+    --gold:#ffb400;
+    --gold-strong:#ffc933;
+    --gold-soft:#ffdf7a;
+    --light:#ffffff;
+    --text:#d9d9d9;
+    --card:#111111;
+    --border:rgba(255,180,0,.18);
+    --glow:0 0 25px rgba(255,180,0,.45);
+}
+
+/* RESET */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:white;
+    overflow-x:hidden;
+}
+
+/* =========================================
+FUNDO
+========================================= */
+
+.background{
+    position:fixed;
+    inset:0;
+    z-index:-3;
+
+    background:
+    radial-gradient(circle at top left,
+    rgba(255,180,0,.18) 0%,
+    transparent 28%),
+
+    radial-gradient(circle at top right,
+    rgba(255,210,90,.14) 0%,
+    transparent 30%),
+
+    radial-gradient(circle at bottom center,
+    rgba(255,180,0,.08) 0%,
+    transparent 40%),
+
+    linear-gradient(135deg,#000000,#070707,#0b0b0b);
+}
+
+.background::after{
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background:
+    repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 120px,
+        rgba(255,180,0,.03) 121px
+    );
+
+    animation:energyMove 12s linear infinite;
+}
+
+@keyframes energyMove{
+    from{
+        transform:translateX(0);
+    }
+    to{
+        transform:translateX(120px);
+    }
+}
+
+/* GRID */
+
+.grid{
+    position:fixed;
+    inset:0;
+    z-index:-2;
+
+    background-image:
+    linear-gradient(rgba(255,180,0,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,180,0,.05) 1px,transparent 1px);
+
+    background-size:45px 45px;
+}
+
+/* =========================================
+NAVBAR
+========================================= */
+
+nav{
+    width:100%;
+    position:fixed;
+    top:0;
+    left:0;
+    z-index:1000;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:20px 70px;
+
+    background:rgba(0,0,0,.72);
+    backdrop-filter:blur(18px);
+
+    border-bottom:1px solid rgba(255,180,0,.15);
+}
+
+.logo{
+    font-size:24px;
+    font-weight:800;
+    letter-spacing:1px;
+
+    color:white;
+}
+
+.logo span{
+    color:var(--gold);
+
+    text-shadow:
+    0 0 10px rgba(255,180,0,.7),
+    0 0 20px rgba(255,180,0,.5);
+}
+
+nav ul{
+    display:flex;
+    list-style:none;
+    gap:35px;
+}
+
+nav ul li a{
+    color:#ddd;
+    text-decoration:none;
+    font-size:15px;
+    font-weight:500;
+
+    transition:.3s;
+    position:relative;
+}
+
+nav ul li a::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:-8px;
+
+    width:0%;
+    height:2px;
+
+    background:var(--gold);
+
+    transition:.4s;
+}
+
+nav ul li a:hover{
+    color:var(--gold);
+}
+
+nav ul li a:hover::after{
+    width:100%;
+}
+
+/* =========================================
+HERO
+========================================= */
+
+.hero{
+    min-height:100vh;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:140px 8%;
+}
+
+.hero-content{
+    width:100%;
+
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:70px;
+    align-items:center;
+}
+
+/* TEXTO */
+
+.hero-text h1{
+    font-size:68px;
+    line-height:1.05;
+    margin-bottom:28px;
+
+    font-weight:800;
+}
+
+.hero-text h1 span{
+    color:var(--gold);
+
+    text-shadow:
+    0 0 12px rgba(255,180,0,.9),
+    0 0 28px rgba(255,180,0,.45);
+}
+
+.hero-text p{
+    font-size:18px;
+    line-height:1.9;
+    color:#bfbfbf;
+    margin-bottom:40px;
+}
+
+/* BOTÕES */
+
+.buttons{
+    display:flex;
+    gap:20px;
+}
+
+.btn{
+    padding:16px 30px;
+    border-radius:14px;
+    border:none;
+    cursor:pointer;
+
+    font-weight:700;
+    font-size:15px;
+
+    transition:.35s;
+}
+
+/* BOTÃO PRINCIPAL */
+
+.btn-primary{
+    background:linear-gradient(
+        135deg,
+        #ffb400,
+        #ffd54f
+    );
+
+    color:#111;
+
+    box-shadow:
+    0 0 25px rgba(255,180,0,.35);
+}
+
+.btn-primary:hover{
+    transform:translateY(-4px) scale(1.02);
+
+    box-shadow:
+    0 0 35px rgba(255,180,0,.65);
+}
+
+/* BOTÃO SECUNDÁRIO */
+
+.btn-secondary{
+    background:rgba(255,180,0,.06);
+
+    border:1px solid rgba(255,180,0,.2);
+
+    color:white;
+}
+
+.btn-secondary:hover{
+    background:rgba(255,180,0,.12);
+
+    border-color:rgba(255,180,0,.5);
+}
+
+/* =========================================
+PAINEL
+========================================= */
+
+.system-panel{
+
+    background:rgba(15,15,15,.82);
+
+    border:1px solid rgba(255,180,0,.14);
+
+    border-radius:28px;
+
+    padding:35px;
+
+    backdrop-filter:blur(18px);
+
+    box-shadow:
+    0 0 40px rgba(255,180,0,.08),
+    0 12px 45px rgba(0,0,0,.6);
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+.system-panel::before{
+    content:"";
+    position:absolute;
+
+    top:-120px;
+    right:-120px;
+
+    width:240px;
+    height:240px;
+
+    background:radial-gradient(
+        circle,
+        rgba(255,180,0,.35),
+        transparent 70%
+    );
+}
+
+/* HEADER */
+
+.panel-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:30px;
+}
+
+.panel-header h2{
+    color:var(--gold-soft);
+    letter-spacing:1px;
+}
+
+/* STATUS */
+
+.status{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    color:#ffe9a8;
+    font-weight:600;
+}
+
+.dot{
+    width:12px;
+    height:12px;
+
+    border-radius:50%;
+
+    background:#ffd000;
+
+    box-shadow:
+    0 0 12px #ffd000,
+    0 0 24px #ffd000;
+
+    animation:pulse 1.4s infinite;
+}
+
+@keyframes pulse{
+    0%{
+        transform:scale(1);
+    }
+    50%{
+        transform:scale(1.3);
+    }
+    100%{
+        transform:scale(1);
+    }
+}
+
+/* =========================================
+TEMPERATURAS
+========================================= */
+
+.temp-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+}
+
+.temp-card{
+    background:rgba(255,180,0,.04);
+
+    border:1px solid rgba(255,180,0,.12);
+
+    border-radius:22px;
+
+    padding:28px;
+
+    transition:.35s;
+}
+
+.temp-card:hover{
+    transform:translateY(-5px);
+
+    border-color:rgba(255,180,0,.45);
+
+    box-shadow:var(--glow);
+}
+
+.temp-title{
+    color:#d2b56d;
+    margin-bottom:12px;
+}
+
+.temp-value{
+    font-size:44px;
+    font-weight:800;
+}
+
+.red{
+    color:#ffb400;
+
+    text-shadow:
+    0 0 18px rgba(255,180,0,.5);
+}
+
+.blue{
+    color:#ffe08a;
+
+    text-shadow:
+    0 0 18px rgba(255,220,120,.4);
+}
+
+/* =========================================
+FLUXO
+========================================= */
+
+.flow{
+    margin-top:35px;
+}
+
+.flow h3{
+    margin-bottom:16px;
+    color:#fff0c1;
+}
+
+.flow-line{
+    width:100%;
+    height:12px;
+
+    border-radius:30px;
+
+    background:rgba(255,255,255,.06);
+
+    overflow:hidden;
+    position:relative;
+}
+
+.flow-line::before{
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    width:40%;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        #ffb400,
+        #fff1a6,
+        #ffb400,
+        transparent
+    );
+
+    animation:flow 3s linear infinite;
+}
+
+@keyframes flow{
+    0%{
+        transform:translateX(-100%);
+    }
+    100%{
+        transform:translateX(300%);
+    }
+}
+
+/* =========================================
+SEÇÕES
+========================================= */
+
+section{
+    padding:120px 8%;
+}
+
+.section-title{
+    font-size:48px;
+    margin-bottom:18px;
+    font-weight:800;
+}
+
+.section-title span{
+    color:var(--gold);
+
+    text-shadow:
+    0 0 15px rgba(255,180,0,.55);
+}
+
+.section-text{
+    max-width:900px;
+
+    line-height:1.9;
+    color:#c4c4c4;
+
+    margin-bottom:60px;
+}
+
+/* =========================================
+CARDS
+========================================= */
+
+.cards{
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(260px,1fr));
+
+    gap:28px;
+}
+
+.card{
+    background:rgba(20,20,20,.82);
+
+    border:1px solid rgba(255,180,0,.12);
+
+    border-radius:26px;
+
+    padding:32px;
+
+    transition:.4s;
+
+    position:relative;
+    overflow:hidden;
+}
+
+.card::before{
+    content:"";
+    position:absolute;
+
+    inset:0;
+
+    background:linear-gradient(
+        135deg,
+        rgba(255,180,0,.08),
+        transparent 45%
+    );
+
+    opacity:0;
+
+    transition:.4s;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+
+    border-color:rgba(255,180,0,.45);
+
+    box-shadow:
+    0 0 35px rgba(255,180,0,.12);
+}
+
+.card:hover::before{
+    opacity:1;
+}
+
+.card h3{
+    margin-bottom:18px;
+
+    font-size:23px;
+
+    color:#fff1c7;
+}
+
+.card p{
+    color:#bbbbbb;
+    line-height:1.8;
+}
+
+/* =========================================
+TIMELINE
+========================================= */
+
+.timeline{
+    display:flex;
+    flex-direction:column;
+    gap:35px;
+}
+
+.timeline-item{
+    display:flex;
+    gap:22px;
+    align-items:flex-start;
+}
+
+.timeline-dot{
+    width:18px;
+    height:18px;
+
+    border-radius:50%;
+
+    background:var(--gold);
+
+    margin-top:5px;
+
+    box-shadow:
+    0 0 18px rgba(255,180,0,.9),
+    0 0 35px rgba(255,180,0,.4);
+}
+
+.timeline-content{
+    background:rgba(15,15,15,.85);
+
+    border:1px solid rgba(255,180,0,.12);
+
+    border-radius:22px;
+
+    padding:28px;
+
+    flex:1;
+
+    transition:.35s;
+}
+
+.timeline-content:hover{
+    border-color:rgba(255,180,0,.4);
+
+    transform:translateX(5px);
+}
+
+.timeline-content h3{
+    margin-bottom:12px;
+    color:#fff1c7;
+}
+
+.timeline-content p{
+    color:#bcbcbc;
+    line-height:1.8;
+}
+
+/* =========================================
+FOOTER
+========================================= */
+
+footer{
+    padding:45px;
+
+    text-align:center;
+
+    color:#9f9f9f;
+
+    border-top:1px solid rgba(255,180,0,.1);
+
+    background:#050505;
+}
+
+/* =========================================
+RESPONSIVO
+========================================= */
+
+@media(max-width:980px){
+
+.hero-content{
+    grid-template-columns:1fr;
+}
+
+.hero-text h1{
+    font-size:50px;
+}
+
+nav{
+    padding:20px;
+}
+
+nav ul{
+    display:none;
+}
+
+.section-title{
+    font-size:38px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="background"></div>
+<div class="grid"></div>
+
+<!-- NAVBAR -->
+
+<nav>
+
+    <div class="logo">
+        NOITE DA <span>ELÉTRICA</span>
+    </div>
+
+    <ul>
+        <li><a href="#">Projeto</a></li>
+        <li><a href="equipe.html">Equipe</a></li>
+        
+    </ul>
+
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+
+<div class="hero-content">
+
+<!-- TEXTO -->
+
+<div class="hero-text">
+
+<h1>
+Sistema de Controle de Temperatura
+em <span>Malha Fechada</span>
+</h1>
+
+<p>
+Bancada didática industrial desenvolvida para demonstrar, de forma visual e interativa, o funcionamento de sistemas automáticos de controle térmico utilizados em processos industriais modernos.
+</p>
+
+<div class="buttons">
+
+
+
+<a href="funcionamento.html" c class="btn btn-primary">
+    Componentes
+</a>
+
+</div>
+
+</div>
+
+<!-- PAINEL -->
+
+<div class="system-panel">
+
+<div class="panel-header">
+
+<h2>STATUS DO SISTEMA</h2>
+
+<div class="status">
+<div class="dot"></div>
+ONLINE
+</div>
+
+</div>
+
+<div class="temp-grid">
+
+<div class="temp-card">
+
+<div class="temp-title">
+Temperatura Quente
+</div>
+
+<div class="temp-value red" id="hotTemp">
+65°C
+</div>
+
+</div>
+
+<div class="temp-card">
+
+<div class="temp-title">
+Temperatura Fria
+</div>
+
+<div class="temp-value blue" id="coldTemp">
+12°C
+</div>
+
+</div>
+
+</div>
+
+<div class="flow">
+
+<h3>
+Fluxo Térmico
+</h3>
+
+<div class="flow-line"></div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- SOBRE -->
+
+<section>
+
+<h2 class="section-title">
+Sobre o <span>Projeto</span>
+</h2>
+
+<p class="section-text">
+O projeto consiste em uma bancada didática capaz de demonstrar o funcionamento de um sistema de controle térmico industrial em tempo real, utilizando aquecimento elétrico, resfriamento por troca de calor e controle automático em malha fechada através de instrumentação industrial.
+</p>
+
+<div class="cards">
+
+<div class="card">
+<h3>🔥 Circuito Quente</h3>
+<p>
+Sistema responsável pelo aquecimento da água através de resistência elétrica controlada automaticamente conforme o setpoint.
+</p>
+</div>
+
+<div class="card">
+<h3>❄ Circuito Frio</h3>
+<p>
+Sistema de refrigeração tipo chiller utilizando compressor e serpentina para redução da temperatura.
+</p>
+</div>
+
+<div class="card">
+<h3>⚙ Controle Industrial</h3>
+<p>
+Controlador de temperatura operando em malha fechada através da leitura do termopar industrial.
+</p>
+</div>
+
+<div class="card">
+<h3>🔄 Trocador de Calor</h3>
+<p>
+Transferência térmica eficiente entre os circuitos sem mistura entre os fluidos do sistema.
+</p>
+</div>
+
+</div>
+
+</section>
+
+<!-- FUNCIONAMENTO -->
+
+<section>
+
+<h2 class="section-title">
+Funcionamento do <span>Sistema</span>
+</h2>
+
+<div class="timeline">
+
+<div class="timeline-item">
+
+<div class="timeline-dot"></div>
+
+<div class="timeline-content">
+<h3>Leitura da Temperatura</h3>
+<p>
+O controlador industrial recebe continuamente o sinal do sensor de temperatura instalado no tanque principal.
+</p>
+</div>
+
+</div>
+
+<div class="timeline-item">
+
+<div class="timeline-dot"></div>
+
+<div class="timeline-content">
+<h3>Análise do Setpoint</h3>
+<p>
+O sistema compara a temperatura medida com o valor de referência programado pelo operador.
+</p>
+</div>
+
+</div>
+
+<div class="timeline-item">
+
+<div class="timeline-dot"></div>
+
+<div class="timeline-content">
+<h3>Controle Automático</h3>
+<p>
+O sistema aciona automaticamente aquecimento ou resfriamento conforme a necessidade do processo.
+</p>
+</div>
+
+</div>
+
+<div class="timeline-item">
+
+<div class="timeline-dot"></div>
+
+<div class="timeline-content">
+<h3>Realimentação Negativa</h3>
+<p>
+A temperatura retorna continuamente ao controlador garantindo estabilidade térmica no processo.
+</p>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- RESULTADOS -->
+
+<section>
+
+<h2 class="section-title">
+Resultados <span>Esperados</span>
+</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>📈 Controle Estável</h3>
+<p>
+Manutenção automática da temperatura próxima ao setpoint definido.
+</p>
+</div>
+
+<div class="card">
+<h3>⚡ Resposta Dinâmica</h3>
+<p>
+Atuação rápida do sistema diante de variações térmicas.
+</p>
+</div>
+
+<div class="card">
+<h3>💧 Troca Térmica</h3>
+<p>
+Eficiência na transferência de calor entre os circuitos.
+</p>
+</div>
+
+<div class="card">
+<h3>🛡 Operação Segura</h3>
+<p>
+Funcionamento contínuo e seguro durante toda a apresentação.
+</p>
+</div>
+
+</div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+
+Sistema de Controle de Temperatura em Malha Fechada • Projeto Acadêmico Industrial
+<p> Site desenvolvido por Jordan Everton </p>   
+
+</footer>
+
+<script>
+
+/* =========================================
+ANIMAÇÃO TEMPERATURA
+========================================= */
+
+const hotTemp = document.getElementById("hotTemp");
+const coldTemp = document.getElementById("coldTemp");
+
+let hot = 65;
+let cold = 12;
+
+setInterval(() => {
+
+    hot += (Math.random() * 2 - 1);
+    cold += (Math.random() * 2 - 1);
+
+    hotTemp.innerHTML = hot.toFixed(1) + "°C";
+    coldTemp.innerHTML = cold.toFixed(1) + "°C";
+
+},2000);
+
+</script>
+
+</body>
+</html>
